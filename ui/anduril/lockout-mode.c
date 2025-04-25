@@ -91,15 +91,15 @@ uint8_t lockout_state(Event event, uint16_t arg) {
     }
     #endif
 
-    // 3 clicks: exit and turn off
-    else if (event == EV_3clicks) {
+    // 2 clicks: exit and turn off
+    else if (event == EV_2clicks) {
         blink_once();
         set_state(off_state, 0);
         return EVENT_HANDLED;
     }
 
-    // 4 clicks: exit and turn on
-    else if (event == EV_4clicks) {
+    // 3 clicks: exit and turn on
+    else if (event == EV_3clicks) {
         #if defined(USE_MANUAL_MEMORY) && !defined(USE_MANUAL_MEMORY_TIMER)
         // this clause probably isn't used by any configs any more
         // but is included just in case someone configures it this way
