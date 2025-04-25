@@ -166,7 +166,7 @@ uint8_t off_state(Event event, uint16_t arg) {
         //        (need to duplicate manual mem logic here, probably)
         set_state(steady_state, memorized_level);
         #endif
-        return EVENT_HANDLED;
+        return EVENT_HANDLED;					 
     }
 
     // click, hold: momentary at ceiling or turbo
@@ -381,15 +381,19 @@ uint8_t off_state(Event event, uint16_t arg) {
     }
     #endif  // ifdef USE_SIMPLE_UI
 
-    #ifdef USE_MOMENTARY_MODE
-    // 5 clicks: momentary mode
-    else if (event == EV_5clicks) {
-        blink_once();
-        set_state(momentary_state, 0);
+    // click, click, long-click: strobe mode
+    #ifdef USE_STROBE_STATE
+    else if (event == EV_click3_hold) {
+        set_state(strobe_state, 0);
         return EVENT_HANDLED;
     }
-    #endif
-
+    #elif defined(USE_BORING_STROBE_STATE)
+    else if (event == EV_click3_hold) {
+        set_state(boring_strobe_state, 0);
+        return EVENT_HANDLED;
+    }
+    #endif										
+						   
     #ifdef USE_TACTICAL_MODE
     // 6 clicks: tactical mode
     else if (event == EV_6clicks) {
@@ -406,7 +410,7 @@ uint8_t off_state(Event event, uint16_t arg) {
         return EVENT_HANDLED;
     }
     #endif
-
+    
     return EVENT_NOT_HANDLED;
 }
 
