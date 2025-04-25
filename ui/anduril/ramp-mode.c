@@ -127,10 +127,10 @@ uint8_t steady_state(Event event, uint16_t arg) {
         set_state(off_state, 0);
         return EVENT_HANDLED;
     }
-    // 2 clicks: go to/from highest level
+ // 2 clicks: go to/from highest level Removed turbo set to mode_max
     else if (event == EV_2clicks) {
-        if (actual_level < turbo_level) {
-            set_level_and_therm_target(turbo_level);
+        if (actual_level < mode_max) {
+            set_level_and_therm_target(mode_max);
         }
         else {
             set_level_and_therm_target(memorized_level);
@@ -204,46 +204,6 @@ uint8_t steady_state(Event event, uint16_t arg) {
         #endif
         memorized_level = nearest_level((int16_t)actual_level \
                           + (step_size * ramp_direction));
-        #if defined(BLINK_AT_RAMP_CEIL) || defined(BLINK_AT_RAMP_MIDDLE)
-        // only blink once for each threshold
-        // FIXME: blinks at beginning of smooth_steps animation instead
-        // of the end, so it should blink when actual_level reaches a
-        // threshold, instead of when memorized_level does
-        // (one possible fix is to just remove mid-ramp blinks entirely,
-        //  and just blink only when it hits the top while going up)
-        if ((memorized_level != actual_level) && (
-                0  // for easier syntax below
-                #ifdef BLINK_AT_RAMP_MIDDLE_1
-                || (memorized_level == BLINK_AT_RAMP_MIDDLE_1)
-                #endif
-                #ifdef BLINK_AT_RAMP_MIDDLE_2
-                || (memorized_level == BLINK_AT_RAMP_MIDDLE_2)
-                #endif
-                #ifdef BLINK_AT_RAMP_CEIL
-                // FIXME: only blink at top when going up, not down
-                || (memorized_level == mode_max)
-                #endif
-                #ifdef BLINK_AT_RAMP_FLOOR
-                || (memorized_level == mode_min)
-                #endif
-                )) {
-            blip();
-        }
-        #endif
-        #if defined(BLINK_AT_STEPS)
-        uint8_t foo = cfg.ramp_style;
-        cfg.ramp_style = 1;
-        uint8_t nearest = nearest_level((int16_t)actual_level);
-        cfg.ramp_style = foo;
-        // only blink once for each threshold
-        if ((memorized_level != actual_level) &&
-                    (cfg.ramp_style == 0) &&
-                    (memorized_level == nearest)
-                    )
-        {
-            blip();
-        }
-        #endif
         set_level_and_therm_target(memorized_level);
         #ifdef USE_SUNSET_TIMER
         reset_sunset_timer();
@@ -410,26 +370,6 @@ uint8_t steady_state(Event event, uint16_t arg) {
     }
     #endif
 
-    // 3 clicks: toggle smooth vs discrete ramping
-    // (and/or 6 clicks when there are multiple channel modes)
-    // (handle 3C here anyway, when all but 1 mode is disabled)
-    else if ((event == EV_3clicks)
-        #if NUM_CHANNEL_MODES > 1
-             || (event == EV_6clicks)
-        ) {
-            // detect if > 1 channel mode is enabled,
-            // and if so, fall through so channel mode code can handle it
-            // otherwise, change the ramp style
-            if (event == EV_3clicks) {
-                uint8_t enabled = 0;
-                for (uint8_t m=0; m<NUM_CHANNEL_MODES; m++)
-                    enabled += channel_mode_enabled(m);
-                if (enabled > 1)
-                    return EVENT_NOT_HANDLED;
-            }
-        #else
-        ) {
-        #endif
 
         cfg.ramp_style = !cfg.ramp_style;
         save_config();
@@ -490,15 +430,6 @@ uint8_t steady_state(Event event, uint16_t arg) {
         return EVENT_HANDLED;
     }
 
-    #ifdef USE_MOMENTARY_MODE
-    // 5 clicks: shortcut to momentary mode
-    else if (event == EV_5clicks) {
-        memorized_level = actual_level;  // allow turbo in momentary mode
-        set_level(0);
-        set_state(momentary_state, 0);
-        return EVENT_HANDLED;
-    }
-    #endif
 
     #ifdef USE_BUTTON_LED
     // 7C: temporarily turn off button LED. Will reset when entering off/lockout
