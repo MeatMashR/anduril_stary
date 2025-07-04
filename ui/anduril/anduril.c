@@ -287,12 +287,16 @@ void loop() {
 
     #ifdef USE_AUX_RGB_LEDS_WHILE_ON
         // display battery charge on RGB button during use
-      #ifdef USE_CONFIGURABLE_RGB_VOLTAGE_LEVELS
-        if ((state == steady_state) && (actual_level > cfg.use_aux_rgb_leds_while_on_min_level)) // only show voltage if we are above the configured minimum ramp level
-      #else
-        if (state == steady_state)
-      #endif
-          rgb_led_voltage_readout(actual_level > USE_AUX_RGB_LEDS_WHILE_ON);
+        if (state == steady_state) {
+            #ifdef USE_AUX_THRESHOLD_CONFIG
+            // only show voltage if feature is enabled and
+            // we are above the configured minimum ramp level
+            if (actual_level > cfg.button_led_low_ramp_level)
+                rgb_led_voltage_readout(actual_level > cfg.button_led_high_ramp_level);
+            #else
+                rgb_led_voltage_readout(actual_level > USE_AUX_RGB_LEDS_WHILE_ON);
+            #endif
+        }
     #endif
 
     if (0) {}  // placeholder

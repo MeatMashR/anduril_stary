@@ -8,14 +8,20 @@
 
 #ifdef HAS_AUX_LEDS
 inline void set_level_aux_leds(uint8_t level) {
+    #ifdef USE_AUX_THRESHOLD_CONFIG
+        #define AUX_BRIGHTNESS ((level > cfg.button_led_low_ramp_level) \
+            << (level > cfg.button_led_high_ramp_level))
+    #else
+        #define AUX_BRIGHTNESS ((level > 0) + (level > DEFAULT_LEVEL))
+    #endif
     #ifdef USE_INDICATOR_LED_WHILE_RAMPING
         // use side-facing aux LEDs while main LEDs are on
         if (! go_to_standby) {
         #ifdef USE_INDICATOR_LED
-            indicator_led((level > 0) + (level > DEFAULT_LEVEL));
+            indicator_led(AUX_BRIGHTNESS);
         #endif
         #ifdef USE_BUTTON_LED
-            button_led_set((level > 0) + (level > DEFAULT_LEVEL));
+            button_led_set(AUX_BRIGHTNESS);
         #endif
         }
     #else  // turn off front-facing aux LEDs while main LEDs are on
@@ -27,11 +33,14 @@ inline void set_level_aux_leds(uint8_t level) {
             #ifdef USE_AUX_RGB_LEDS
                 rgb_led_set(0);
                 #ifdef USE_BUTTON_LED
-                    button_led_set((level > 0) + (level > DEFAULT_LEVEL));
+                    button_led_set(AUX_BRIGHTNESS);
                 #endif
             #endif
         }
         #endif
+    #endif
+    #ifdef AUX_BRIGHTNESS
+    #undef AUX_BRIGHTNESS
     #endif
 }
 #endif  // ifdef HAS_AUX_LEDS
@@ -41,9 +50,9 @@ inline void set_level_aux_leds(uint8_t level) {
 #include "anduril/aux-leds.h"  // for rgb_led_voltage_readout()
 inline void set_level_aux_rgb_leds(uint8_t level) {
     if (! go_to_standby) {
-        #ifdef USE_CONFIGURABLE_RGB_VOLTAGE_LEVELS
-        if ((level > 0) && (actual_level > cfg.use_aux_rgb_leds_while_on_min_level)){
-            rgb_led_voltage_readout(level > cfg.use_aux_rgb_leds_while_on);
+        #ifdef USE_AUX_THRESHOLD_CONFIG
+        if (level > cfg.button_led_low_ramp_level) {
+            rgb_led_voltage_readout(level > cfg.button_led_high_ramp_level);
         }
         #else
         if (level > 0) {
@@ -56,7 +65,13 @@ inline void set_level_aux_rgb_leds(uint8_t level) {
         // some drivers can be wired with RGB or single color to button
         // ... so support both even though only one is connected
         #ifdef USE_BUTTON_LED
+            #ifdef USE_AUX_THRESHOLD_CONFIG
+            button_led_set(
+                    (level > cfg.button_led_low_ramp_level)
+                    << (level > cfg.button_led_high_ramp_level));
+            #else
             button_led_set((level > 0) + (level > DEFAULT_LEVEL));
+            #endif
         #endif
     }
 }

@@ -169,18 +169,28 @@ Config cfg = {
         .jump_start_level = DEFAULT_JUMP_START_LEVEL,
     #endif
 
-    #if defined(USE_AUX_RGB_LEDS_WHILE_ON) && defined(USE_CONFIGURABLE_RGB_VOLTAGE_LEVELS)
-        // config for RGB voltage. We need to check these here rather than setting defaults in `config-default.h` as we only know *after* defaults are loaded if `USE_AUX_RGB_LEDS_WHILE_ON` is set or unset (in `CFG_H`).
-        #if (USE_AUX_RGB_LEDS_WHILE_ON + 0) // if USE_AUX_RGB_LEDS_WHILE_ON is an int, passes. If blank (undefined or defined with no value), evaluates to `(+0)` which evaluates to false.
-        .use_aux_rgb_leds_while_on = USE_AUX_RGB_LEDS_WHILE_ON,
+    #if defined(USE_AUX_THRESHOLD_CONFIG)
+        // config for RGB voltage. We need to check these here rather than
+        // setting defaults in `config-default.h` as we only know *after*
+        // defaults are loaded if `USE_AUX_RGB_LEDS_WHILE_ON` is set or unset
+        // (in `CFG_H`).
+        #ifdef USE_AUX_LEDS_WHILE_ON_INITIAL_MINIMUM_LEVEL
+            .button_led_low_ramp_level = USE_AUX_LEDS_WHILE_ON_INITIAL_MINIMUM_LEVEL,
         #else
-        #warning "USE_AUX_RGB_LEDS_WHILE_ON defined but has no value. Setting minimum threshold to default of 25"
-        .use_aux_rgb_leds_while_on = 25,
+            .button_led_low_ramp_level = 0,  // default
         #endif
-        #ifdef USE_AUX_RGB_LEDS_WHILE_ON_INITIAL_MINIMUM_LEVEL
-        .use_aux_rgb_leds_while_on_min_level = USE_AUX_RGB_LEDS_WHILE_ON_INITIAL_MINIMUM_LEVEL,
+        #if (USE_AUX_RGB_LEDS_WHILE_ON + 0)
+            // if USE_AUX_RGB_LEDS_WHILE_ON is an int, passes. If blank (undefined
+            // or defined with no value), evaluates to `(+0)` which evaluates to
+            // false.
+            .button_led_high_ramp_level = USE_AUX_RGB_LEDS_WHILE_ON,
         #else
-        .use_aux_rgb_leds_while_on_min_level = 15, // default
+            #ifdef USE_AUX_RGB_LEDS
+                //#warning "USE_AUX_RGB_LEDS_WHILE_ON defined but has no value. Setting to default value."
+                .button_led_high_ramp_level = 25 - 1,  // default
+            #else
+                .button_led_high_ramp_level = DEFAULT_LEVEL - 1,  // default
+            #endif
         #endif
     #endif
 

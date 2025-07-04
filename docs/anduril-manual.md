@@ -455,16 +455,17 @@ The voltage config menu has these settings:
      once per desired second, or zero times to turn this function
      off.
 
-  3. RGB voltage while on high threshold. On lights where the battery
-     voltage is displayed using RGB aux while the light is on, sets
-     the ramp level at which the aux will switch to high brightness.
-     If set to 151, this effectively forces the voltage to only ever
-     be displayed using low brightness, or if set to 0, to only ever
-     use high brightness.
+  3. Aux low ramp level.  Controls behavior of aux button LEDs while the main
+     LEDs are on.  Below this ramp level, button LEDs will not be lit up while
+     the main LEDs are on.  At or above this level, button LEDs light up at the
+     "low" brightness level.  Setting it to 0 keeps the button LEDs off
+     completely while the main LEDs are on.  
+     Also controls brightness of post-off voltage display.
 
-  4. RGB voltage while on minimum level. Below this level, voltage will
-     not be displayed using the RGB aux at all. Setting this to 151+
-     effectively disables the entire feature.
+  4. Aux high ramp level.  At or above this ramp level, button LEDs light up at
+     the "high" brightness level.  Setting it to 0 disables button's high aux
+     mode while the main LEDs are on.  
+     Also controls brightness of post-off voltage display.
 
 ### Temperature check:
 
@@ -1076,14 +1077,18 @@ This is a table of all button mappings in Anduril, in one place:
 | Batt check     | Full   | `3C`    | Next channel mode (for number blinks only)
 | Batt check     | Full   | `7H`    | Voltage config menu
 |                |        |         | 1: voltage correction factor
-|                |        |         |    ...
-|                |        |         |    5: -0.10V
-|                |        |         |    6: -0.05V
-|                |        |         |    7: no correction
-|                |        |         |    8: +0.05V
-|                |        |         |    9: +0.10V
-|                |        |         |    ...
+|                |        |         | ... 5: -0.10V
+|                |        |         | ... 6: -0.05V
+|                |        |         | ... 7: no correction
+|                |        |         | ... 8: +0.05V
+|                |        |         | ... 9: +0.10V
 |                |        |         | 2: post-off voltage display seconds
+|                |        |         | 3: aux low ramp level
+|                |        |         | ... 0: disabled
+|                |        |         | ... 1+: light up at this ramp level
+|                |        |         | 4: aux high ramp level
+|                |        |         | ... 0: disabled
+|                |        |         | ... 1+: brighter at this ramp level
 
 | Mode           | UI     | Button  | Action
 | :---           | :--    | ------: | :-----
