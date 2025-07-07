@@ -424,25 +424,27 @@ In more detail, this is what each blinky / utility mode does:
 
 Blinks out the battery voltage per cell.  Full is 4.20V, empty is
 about 3.00V.  The light blinks the whole-number digit first, pauses,
-then blinks out the "tenths" digit, pauses, then blinks out the
-"hundredths" digit, in 0.02V steps.  Then a longer pause, and it
-repeats.  So for 4.16V, it would be "blink-blink-blink-blink .. blink
-.. blink-blink-blink-blink-blink-blink".
+then blinks out the "tenths" digit, pauses, then blinks out the "hundredths"
+digit, in 0.02V steps.  So for 4.16V, it would be "4 blinks, 1 blink,
+6 blinks".  Then if it is in Advanced UI, it pauses for a bit longer and
+repeats.  In Simple UI, it turns off after one readout.
 
 A "zero" digit is represented by a very quick blink.
 
 The battery check format has changed a few times:
 
- - For Anduril 2 from 2024-04 or later, the battery voltage resolution
-   is 0.02V steps (the last digit can be 0, 2, 4, 6, or 8).
+  - For Anduril 2 from 2024-04 or later, the battery voltage resolution is
+    0.02V steps (the last digit can be 0, 2, 4, 6, or 8).
 
- - For Anduril 2 from 2023-12 or later, the battery voltage resolution
-   is 0.025V steps (the last digit can be 0, 2, 5, or 7).
+  - For Anduril 2 from 2023-12 or later, the battery voltage resolution is
+    0.025V steps (the last digit can be 0, 2, 5, or 7).
 
- - For Anduril 2 from 2023-12 or earlier, the battery voltage resolution
-   is 0.1V, so the light blinks the whole-number digit first, pauses,
-   then blinks out the "tenths" digit.  Then a longer pause, and it
-   repeats.
+  - For Anduril 2 from 2023-12 or earlier, the battery voltage resolution is
+    0.1V, so the light blinks the whole-number digit first, pauses, then blinks
+    out the "tenths" digit.  Then a longer pause, and it repeats.
+
+  - On old attiny85 lights with only 8 KiB of ROM, battery voltage resolution
+    is 0.1V, even on newer versions of Anduril.
 
 On lights with more than one set of LEDs, pressing `3C` during batt
 check mode can select which set of LEDs (which channel mode) it uses
