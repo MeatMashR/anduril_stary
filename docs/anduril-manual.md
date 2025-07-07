@@ -32,6 +32,7 @@ For a full list of button mappings, scroll down to the
 
 If you have a specific question, it may be covered in the [FAQ](#faq).
 
+
 Button presses
 --------------
 
@@ -218,15 +219,15 @@ Advanced UI's ramp.
 There are four ways to access ramping mode when the light is off:
 
   - `1C`: Turn on at the memorized brightness.
-    (see below for details about what "memorized" means)
+          (see below for details about what "memorized" means)
 
   - `1H`: Turn on at the floor level.  Let go after the light turns on to
-    stay at the floor level, or keep holding to ramp up.
+          stay at the floor level, or keep holding to ramp up.
 
   - `2C`: Turn on at the ceiling level.
 
-  - `2H`: Turn on at full power, turn off when released.  (momentary turbo)
-        (in Simple UI, this uses the ceiling level instead of turbo)
+  - `2H`: Turn on at full power, turn off when released.  (momentary turbo)  
+          (in Simple UI, this uses the ceiling level instead of turbo)
 
 While the light is on, a few actions are available:
 
@@ -235,23 +236,27 @@ While the light is on, a few actions are available:
           (or if it has regulated down, "bump" back up to turbo)  
           (turbo level / behavior is configurable)
   - `1H`: Change brightness (up).  
-          If the button was released less than a second ago, or if it's already
-          at the ceiling, it goes down instead.
+          If the button was released less than a second ago,  
+          or if it's already at the ceiling, it goes down instead.
   - `2H`: Change brightness (down).
 
-  - `3C`: Switch to the other [ramp style](#ramping--stepped-ramping-modes).  (smooth / stepped)  
-          (or activate the next [channel mode](#channel-modes-aka-tint-ramping-or-multi-channel-controls), when more than one is enabled)  
+  - `3C`: Switch to the other [ramp style](#ramping--stepped-ramping-modes).
+          (smooth / stepped)  
+          (or activate the next [channel mode](#channel-modes),
+          when more than one is enabled)  
           (then use 6C instead, for smooth / stepped toggle)
   - `6C`: Switch to the other ramp style.  (when `3C` is mapped to next channel)
 
   - `3H`: Momentary turbo (when current channel has no tint to ramp).
-  - `3H`: [Tint ramping](#channel-modes-aka-tint-ramping-or-multi-channel-controls) (only when current channel has adjustable tint).
+  - `3H`: [Tint ramping](#channel-modes)
+          (only when current channel has adjustable tint).
   - `4H`: Momentary turbo, when `3H` is mapped to tint.
 
   - `4C`: Go to [lockout mode](#lockout-mode).
 
   - `5C`: Go to [momentary mode](#momentary-mode).
   - `5H`: Start a [sunset timer](#sunset-timer).
+
   - `7H`: [Ramp config menu](#ramp-config-menu).
     - Item 1: Floor level.
     - Item 2: Ceiling level.
@@ -265,7 +270,7 @@ While the light is on, a few actions are available:
 
   - `10C`: Activate manual memory and save the current brightness.
            Also saves current channel mode, on multi-channel lights.
-  - `10H`: Ramp extras config menu. <a name="ramp-extras-config-menu" />
+  - `10H`: Ramp extras config menu.
     - Item 1: Disable manual memory and go back to automatic memory.  
               (doesn't matter what value the user enters at the prompt)
     - Item 2: Configure the manual memory timer.  
@@ -388,7 +393,8 @@ lockout mode has two levels:
           (or the manual mem level, if there is one)
 
   - `3H`: Next channel mode (if more than one is enabled).
-<a name="autolock-config">
+
+<a id="autolock-config"></a>
 It is also possible to make the light lock itself automatically after
 being turned off.  To enable this, go to lockout mode and use a `10H`
 action to activate the auto-lock config menu.  Release the button after
@@ -402,6 +408,7 @@ timeout to N minutes.
 On lights which have aux LEDs, there may be additional functions:
 
   - `7C` / `7H`: Change Lockout Mode's [aux LED pattern](#aux-leds--button-leds).
+
 
 Blinky / Utility Modes
 ----------------------
@@ -821,7 +828,7 @@ several formats:
 If the version doesn't include a model number, you may be able to find
 the model in the PRODUCTS file to see which firmware model it probably uses:
 
-  https://github.com/ToyKeeper/anduril/blob/trunk/MODELS
+  https://toykeeper.net/torches/PRODUCTS
 
 
 Protection Features
@@ -931,6 +938,7 @@ lights.  The number of settings in the Misc Config Menu depends on the
 hardware model and the firmware version.
 
 
+<a id="channel-modes"></a>
 Channel Modes (a.k.a. Tint Ramping or Multi Channel controls)
 -------------------------------------------------------------
 
@@ -979,9 +987,9 @@ smooth or stepped brightness ramp.  Additionally, when a channel mode
 has nothing to adjust with `3H`, the `3H` action also reverts to its
 single-channel behavior -- momentary turbo.
 
-The [Misc Config Menu](#misc-config-menu) (`Off -> 9H`) may also have a setting to choose a
-tint ramp style.  There are a few styles available, by entering
-different numbers into that config menu:
+The [Misc Config Menu](#misc-config-menu) (`Off -> 9H`) may also have
+a setting to choose a tint ramp style.  There are a few styles
+available, by entering different numbers into that config menu:
 
   0: smooth ramp  
   1: middle tint only  
