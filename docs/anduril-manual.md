@@ -173,12 +173,17 @@ and they will carry over to Simple UI:
   - ramp style (smooth / stepped)
   - smooth ramp speed
   - ramp-after-moon style
+  - smooth steps
   - memory settings
   - auto-lock settings
   - aux LED settings
   - voltage calibration
+  - post-off voltage display
+  - aux led low and high ramp levels
   - thermal regulation settings
   - hardware-specific "misc menu" settings
+  - channel modes
+  - channel mode for number blinks
 
 
 Advanced UI
