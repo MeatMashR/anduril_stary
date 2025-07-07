@@ -179,6 +179,7 @@ and they will carry over to Simple UI:
   - aux LED settings
   - voltage calibration
   - post-off voltage display
+  - aux led low and high ramp levels
   - thermal regulation settings
   - hardware-specific "misc menu" settings
   - channel modes
