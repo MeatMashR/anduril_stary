@@ -474,7 +474,7 @@ The voltage config menu has these settings:
      This setting determines how many seconds the RGB aux LEDs
      display the voltage color after the torch goes to sleep.  Click
      once per desired second, or zero times to turn this function
-     off. The default is 4 seconds.
+     off.  The default is 4 seconds.
 
   3. Aux low ramp level.  Controls behavior of aux button LEDs while the main
      LEDs are on.  Below this ramp level, button LEDs will not be lit up while
