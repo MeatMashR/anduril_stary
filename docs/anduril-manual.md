@@ -187,6 +187,11 @@ Advanced UI
 Most of the information below this is for the Advanced UI.  Anything not
 already noted above is blocked in the Simple UI.
 
+To check which UI the user is in, Simple UI or Advanced UI, enter battery check
+mode with `3C` from Off.  In Simple UI, the battery voltage is displayed only
+once, but in Advanced UI, the battery voltage is checked and displayed
+repeatedly.
+
 
 Ramping / Stepped Ramping Modes
 -------------------------------
