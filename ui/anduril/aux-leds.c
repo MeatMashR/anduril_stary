@@ -133,13 +133,17 @@ void rgb_led_update(uint8_t mode, uint16_t arg) {
         return;
     }
 
-    uint8_t pattern = (mode>>4);  // off, low, high, blinking, rgb low button high, breathing
+    uint8_t pattern = (mode>>4);  // off, low, high, blinking, rgb low button high, rgb off button high, breathing
     #ifdef USE_BUTTON_LED
     uint8_t button_pattern = pattern;
     if (pattern == 4) {
         // aux LED low, button LED high
-        button_pattern = 2;
         pattern = 1;
+        button_pattern = 2;
+    } else if (pattern == 5) {
+        // aux LED off, button LED high
+        pattern = 0;
+        button_pattern = 2;
     }
     #endif
     uint8_t color = mode & 0x0f;
@@ -227,7 +231,7 @@ void rgb_led_update(uint8_t mode, uint16_t arg) {
         #ifdef USE_BUTTON_LED
         blink_animation_done = 1;
         #endif
-    } else if (pattern == 5) {
+    } else if (pattern == 6) {
         frame = (frame + 1) % sizeof(animation_breath);
         pattern = animation_breath[frame];
         #ifdef USE_BUTTON_LED
@@ -242,7 +246,7 @@ void rgb_led_update(uint8_t mode, uint16_t arg) {
             frame = (frame + 1) % sizeof(animation);
             button_pattern = animation[frame];
         }
-    } else if (button_pattern == 5) {
+    } else if (button_pattern == 6) {
         if (blink_animation_done) {
             button_pattern = pattern;
         } else {

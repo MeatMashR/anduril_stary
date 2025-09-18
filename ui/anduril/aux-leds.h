@@ -24,7 +24,8 @@ void rgb_led_voltage_readout(uint8_t bright);
 #define RGB_HIGH (2<<4)
 #define RGB_BLINK (3<<4)
 #define RGB_LOW_BUTTON_HIGH (4<<4)
-#define RGB_BREATH (5<<4) // not user selectable
+#define RGB_OFF_BUTTON_HIGH (5<<4)
+#define RGB_BREATH (6<<4) // not user selectable
 
 /*
  * 0: R
@@ -52,7 +53,7 @@ const PROGMEM uint8_t rgb_led_colors[] = {
 #define RGB_LED_NUM_COLORS 11
 const uint8_t RGB_LED_NUM_PATTERNS = 4 // pattern 0~3: off, low, high, blink
     #ifdef USE_BUTTON_LED
-    +1 // pattern 4: RGB low button high (pattern 5: breathing, which is not user selectable so total number doesn't change)
+    +2 // pattern 4: RGB low button high, pattern 5: RGB off button high (pattern 6: breathing, which is not user selectable so total number doesn't change)
     #endif
     ;
 #ifndef RGB_LED_OFF_DEFAULT
