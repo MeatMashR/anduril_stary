@@ -97,6 +97,60 @@ uint8_t lockout_state(Event event, uint16_t arg) {
     }
     #endif
 
+        // click, hold: momentary at ceiling or turbo
+    else if (event == EV_click2_hold) {
+        ticks_since_on = 0;  // momentary turbo is definitely "on"
+        uint8_t turbo_level;  // how bright is "turbo"?
+
+        #if defined(USE_2C_STYLE_CONFIG)  // user can choose 2C behavior
+            uint8_t style_2c = cfg.ramp_2c_style;
+            #ifdef USE_SIMPLE_UI
+            // simple UI has its own turbo config
+            if (cfg.simple_ui_active) style_2c = cfg.ramp_2c_style_simple;
+            #endif
+            // 0  = ceiling
+            // 1+ = full power
+            if (0 == style_2c) turbo_level = nearest_level(MAX_LEVEL);
+            else turbo_level = MAX_LEVEL;
+        #else
+            // simple UI: ceiling
+            // full UI: full power
+            #ifdef USE_SIMPLE_UI
+            if (cfg.simple_ui_active) turbo_level = nearest_level(MAX_LEVEL);
+            else
+            #endif
+            turbo_level = MAX_LEVEL;
+        #endif
+
+        off_state_set_level(turbo_level);
+        return EVENT_HANDLED;
+    }
+    else if (event == EV_click2_hold_release) {
+        off_state_set_level(0);
+        return EVENT_HANDLED;
+    }
+    // 2 clicks: highest mode (ceiling)
+    else if (event == EV_2clicks) {
+        set_state(steady_state, MAX_LEVEL);
+        return EVENT_HANDLED;
+    }
+
+    #ifdef USE_LOCKOUT_MODE
+    // 4 clicks: soft lockout
+    else if (event == EV_4clicks) {
+        set_state(lockout_state, 0);
+        return EVENT_HANDLED;
+    }
+    #endif
+    ////////// Every action below here is blocked in the (non-Extended) Simple UI //////////
+
+    #if defined(USE_SIMPLE_UI) && !defined(USE_EXTENDED_SIMPLE_UI)
+    if (cfg.simple_ui_active) {
+        return EVENT_NOT_HANDLED;
+    }
+    #endif  // if simple UI but not extended simple UI
+
+        
     // 3 clicks: exit and turn off
     else if (event == EV_3clicks) {
         blink_once();
@@ -143,14 +197,6 @@ uint8_t lockout_state(Event event, uint16_t arg) {
         }
     }
     #endif
-
-    ////////// Every action below here is blocked in the (non-Extended) Simple UI //////////
-
-    #if defined(USE_SIMPLE_UI) && !defined(USE_EXTENDED_SIMPLE_UI)
-    if (cfg.simple_ui_active) {
-        return EVENT_NOT_HANDLED;
-    }
-    #endif  // if simple UI but not extended simple UI
 
     #if defined(USE_INDICATOR_LED)
     // 7 clicks: rotate through indicator LED modes (lockout mode)
