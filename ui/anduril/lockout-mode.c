@@ -12,30 +12,24 @@ uint8_t lockout_state(Event event, uint16_t arg) {
     // button is being held
     #ifdef USE_AUX_RGB_LEDS
     // don't turn on during RGB aux LED configuration
-    //if (event == EV_click7_hold) { set_level(0); } else
+    if (event == EV_click7_hold) { set_level(0); } else
     #endif
-    uint8_t click_num = event & B_COUNT;
-    if (  // button pressed 1st or 2nd time
-        ((B_CLICK | B_PRESS) == (event & (B_CLICK | B_PRESS)))
-        && (click_num <= 2)
-    ) {
-        uint8_t lvl = cfg.ramp_floors[0];
+
+if ((event & (B_CLICK | B_PRESS)) == (B_CLICK | B_PRESS)) {
         // hold: lowest floor
-        if (1 == click_num) {  // 1st click
-            if (cfg.ramp_floors[1] < lvl) lvl = cfg.ramp_floors[1];
-        }
         // click, hold: highest floor (or manual mem level)
-        else {  // 2nd click
+        uint8_t lvl = cfg.ramp_floors[1];
+        if (1 == (event & 0x0f)) {  // first click
+            if (cfg.ramp_floors[1] < lvl) lvl = cfg.ramp_floors[1];
             #ifdef USE_MANUAL_MEMORY
-            if (cfg.manual_memory) lvl = cfg.manual_memory;
-            else
+            if (cfg.manual_memory) lvl = cfg.manual_memory;            
+        } else {  // 2nd click or later
             #endif
-            if (cfg.ramp_floors[1] > lvl) lvl = cfg.ramp_floors[1];
         }
-        off_state_set_level(lvl);
+        set_level(lvl);
     }
     // button was released
-    else if ((B_CLICK) == (event & (B_CLICK | B_PRESS))) {
+    else if ((event & (B_CLICK | B_PRESS)) == (B_CLICK)) {
         off_state_set_level(0);
     }
     #endif  // ifdef USE_MOON_DURING_LOCKOUT_MODE
@@ -52,9 +46,6 @@ uint8_t lockout_state(Event event, uint16_t arg) {
             // indicator_led_update(cfg.indicator_led_mode >> 2, 0);
         #elif defined(USE_AUX_RGB_LEDS)
             rgb_led_update(cfg.rgb_led_lockout_mode, 0);
-        #endif
-        #ifdef USE_BUTTON_LED
-        button_led_off = 0;
         #endif
     }
 
@@ -84,28 +75,20 @@ uint8_t lockout_state(Event event, uint16_t arg) {
         #if defined(USE_INDICATOR_LED)
         indicator_led_update(cfg.indicator_led_mode >> 2, arg);
         #elif defined(USE_AUX_RGB_LEDS)
-        #ifdef DUAL_VOLTAGE_FLOOR
-        if (voltage > DUAL_VOLTAGE_FLOOR && voltage < VOLTAGE_RED)
-        #else
-        if (voltage < VOLTAGE_RED)
-        #endif
-            rgb_led_update(RGB_RED|RGB_BREATH, arg);
-        else
-            rgb_led_update(cfg.rgb_led_lockout_mode, arg);
+        rgb_led_update(cfg.rgb_led_lockout_mode, arg);
         #endif
         return EVENT_HANDLED;
     }
     #endif
 
-            // 2 clicks: exit and turn off
+    // 2 clicks: exit and turn off
     else if (event == EV_2clicks) {
-        blink_once();
         set_state(off_state, 0);
         return EVENT_HANDLED;
     }
 
-    // 4 clicks: exit and turn on
-    else if (event == EV_4clicks) {
+    // 3 clicks: exit and turn on
+    else if (event == EV_3clicks) {
         #if defined(USE_MANUAL_MEMORY) && !defined(USE_MANUAL_MEMORY_TIMER)
         // this clause probably isn't used by any configs any more
         // but is included just in case someone configures it this way
@@ -128,7 +111,12 @@ uint8_t lockout_state(Event event, uint16_t arg) {
         return EVENT_HANDLED;
     }
 
-    #endif
+    // 5 clicks: exit and turn on at ceiling level
+    else if (event == EV_5clicks) {
+        set_state(steady_state, MAX_LEVEL);
+        return EVENT_HANDLED;
+    }
+
 
     ////////// Every action below here is blocked in the (non-Extended) Simple UI //////////
 
@@ -137,6 +125,16 @@ uint8_t lockout_state(Event event, uint16_t arg) {
         return EVENT_NOT_HANDLED;
     }
     #endif  // if simple UI but not extended simple UI
+
+    #if NUM_CHANNEL_MODES > 1
+    // 3H: next channel mode
+    else if (event == EV_click3_hold) {
+        if (0 == (arg % TICKS_PER_SECOND)) {
+            // pretend the user clicked 3 times to change channels
+            return channel_mode_state(EV_3clicks, 0);
+        }
+    }
+    #endif
 
     #if defined(USE_INDICATOR_LED)
     // 7 clicks: rotate through indicator LED modes (lockout mode)
@@ -218,4 +216,3 @@ uint8_t autolock_config_state(Event event, uint16_t arg) {
     return config_state_base(event, arg, 1, autolock_config_save);
 }
 #endif  // #ifdef USE_AUTOLOCK
-
